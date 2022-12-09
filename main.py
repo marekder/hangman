@@ -52,3 +52,8 @@ def get_categories():
         print(error)
         return {"status": "failed"}
 
+
+@app.get("/words/random")
+def get_words_random():
+    query = random(db.select([words]))
+    result = (connection.execute(query)).fetchall()
