@@ -62,6 +62,22 @@ def get_categories():
         print(error)
         return {"status": "failed"}
 
+# Getting all words
+
+@app.get("/words")
+def get_words():
+    try:
+        query = db.select([words])
+        result = (connection.execute(query)).fetchall()
+        if not result: # if result = []
+            return {"status": "failed", "info": "no records"}
+        return result
+    except Exception as error:
+        print(error)
+        return {"status": "failed"}
+
+
+
 # Getting particular category
 
 
@@ -123,14 +139,12 @@ def get_word_random():
     try:
         query = db.select([words])
         result = (connection.execute(query)).fetchall()
-        print(result)
         random_index = random.randrange(0, len(result))
-        random_word = result[random_index]
-        random_word["Category"] = {"name": "test name", "description": "test description"}
-        return result[random_index]
-        # if not result:
-        #     return {"status": "failed", "info": "no records"}
-        # return result
+        random_word = dict(result[random_index])
+        query = db.select([categories]).where(categories.columns.id == random_word["category_id"])
+        result = (connection.execute(query)).fetchone()
+        random_word["Category"] = {"name": result["name"], "description": result["description"]}
+        return random_word
     except Exception as error:
         print(error)
         return {"status": "failed"}
