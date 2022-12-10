@@ -39,14 +39,6 @@ metadata.create_all(engine)
 print("Klucze tabeli Categories:", categories.columns.keys(), '\n')
 print("Klucze tabeli Words:", words.columns.keys(), '\n')
 
-# dodaję dane do tabeli Categories
-
-# query = db.insert(categories).values(id=1, name='Przyroda', description="Kategoria przyroda")
-# connection.execute(query)
-# select_users_query = db.select([categories])
-# select_results = connection.execute(select_users_query)
-# print("\n", select_results.fetchall())
-
 # Getting all categories
 
 
@@ -75,7 +67,6 @@ def get_words():
     except Exception as error:
         print(error)
         return {"status": "failed"}
-
 
 
 # Getting particular category
@@ -112,6 +103,7 @@ async def add_category(request: Request):
         return {"status": "failed"}
 
 # Adding words
+
 
 @app.post("/words")
 async def add_word(request: Request):
