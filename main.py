@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-engine = db.create_engine('sqlite:///hangman.db', connect_args={"check_same_thread": False})
+engine = db.create_engine('sqlite:///hangman_.db', connect_args={"check_same_thread": False})
 connection = engine.connect()
 metadata = db.MetaData()
 
@@ -77,6 +77,8 @@ def get_category_by_id(id: int):
     except Exception as error:
         print(error)
         return {"status": "failed"}
+
+
 
 
 
