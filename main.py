@@ -94,6 +94,7 @@ def get_category_by_id(id: int):
 
 
 
+
 # @app.get("/words/random")
 # def get_words_random():
 #     try:
