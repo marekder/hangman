@@ -47,7 +47,7 @@ print("Klucze tabeli Words:", words.columns.keys(), '\n')
 # select_results = connection.execute(select_users_query)
 # print("\n", select_results.fetchall())
 
-# Pobranie wszystkich kategorii
+# Getting all categories
 
 
 @app.get("/categories")
@@ -62,7 +62,7 @@ def get_categories():
         print(error)
         return {"status": "failed"}
 
-# Pobranie jednej kategorii
+# Getting particular category
 
 
 @app.get("/categories/{id}")
@@ -78,6 +78,62 @@ def get_category_by_id(id: int):
         print(error)
         return {"status": "failed"}
 
+# Adding categories
+
+
+@app.post("/categories")
+async def add_category(request: Request):
+    try:
+        added_category = json.loads(await request.body())
+        added_name = added_category["name"]
+        added_description = added_category["description"]
+        query = db.insert(categories).values(name=added_name, description=added_description)
+        connection.execute(query)
+        print(added_category["name"], added_category["description"])
+        return {"status": "done"}
+    except Exception as error:
+        print(error)
+        return {"status": "failed"}
+
+# Adding words
+
+@app.post("/words")
+async def add_word(request: Request):
+    try:
+        added_word = json.loads(await request.body())
+        added_category_id = added_word["category_id"]
+        query = db.select([categories]).where(categories.columns.id == added_category_id)
+        result = connection.execute(query).fetchall()
+        if not result:
+            return {"status": "failed", "info": "category does not exist"}
+        added_word = added_word["word"]
+        query = db.insert(words).values(category_id=added_category_id, word=added_word)
+        connection.execute(query)
+        print(added_word)
+        return {"status": "done"}
+    except Exception as error:
+        print(error)
+        return {"status": "failed"}
+
+# Getting random word
+
+
+@app.get("/words/random")
+def get_word_random():
+    try:
+        query = db.select([words])
+        result = (connection.execute(query)).fetchall()
+        print(result)
+        random_index = random.randrange(0, len(result))
+        random_word = result[random_index]
+        random_word["Category"] = {"name": "test name", "description": "test description"}
+        return result[random_index]
+        # if not result:
+        #     return {"status": "failed", "info": "no records"}
+        # return result
+    except Exception as error:
+        print(error)
+        return {"status": "failed"}
 
 
 
@@ -89,23 +145,6 @@ def get_category_by_id(id: int):
 
 
 
-
-
-
-
-
-
-# @app.get("/words/random")
-# def get_words_random():
-#     try:
-#         query = db.select([words])
-#         result = (connection.execute(query)).fetchall()
-#         if not result:
-#             return {"status": "failed", "info": "no records"}
-#         return result
-#     except Exception as error:
-#         print(error)
-#         return {"status": "failed"}
 #
 # @app.get("/categories/{id}/word/")
 # def get_specific_word(categories_id: int):
