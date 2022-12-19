@@ -141,15 +141,17 @@ def get_word_random():
         print(error)
         return {"status": "failed"}
 
+# Updating category
 
 
-
-
-
-
-
-
-
+@app.put("/categories/{id}")
+async def update_category(id: int, request: Request):
+    updated_category = json.loads(await request.body())
+    updated_name = updated_category["name"]
+    updated_desc = updated_category["description"]
+    query = db.update([categories]).where(categories.columns.id == id).values(name=updated_name, description=updated_desc)
+    connection.execute(query)
+    return {"status": "done"}
 
 #
 # @app.get("/categories/{id}/word/")
