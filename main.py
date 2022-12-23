@@ -143,15 +143,34 @@ def get_word_random():
 
 # Updating category
 
-
 @app.put("/categories/{id}")
 async def update_category(id: int, request: Request):
-    updated_category = json.loads(await request.body())
-    updated_name = updated_category["name"]
-    updated_desc = updated_category["description"]
-    query = db.update([categories]).where(categories.columns.id == id).values(name=updated_name, description=updated_desc)
-    connection.execute(query)
-    return {"status": "done"}
+    try:
+        updated_category = json.loads(await request.body())
+        updated_name = updated_category["name"]
+        updated_desc = updated_category["description"]
+        query = categories.update().where(categories.columns.id == id).values(name=updated_name, description=updated_desc)
+        connection.execute(query)
+        return {"status": "updated"}
+    except Exception as error:
+        print(error)
+        return {"status": "failed"}
+
+# Updating word
+
+@app.put("/words/{id}")
+async def update_word(id: int, request: Request):
+    try:
+        updated_word = json.loads((await request.body()))
+        change_cat_id = updated_word["category_id"]
+        change_word = updated_word["word"]
+        query = words.update().where(words.columns.id == id).values(category_id=change_cat_id, word=change_word)
+        connection.execute(query)
+        return {"status": "updated"}
+    except Exception as error:
+        print(error)
+        return {"status": "failed"}
+
 
 #
 # @app.get("/categories/{id}/word/")
