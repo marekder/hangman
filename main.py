@@ -171,11 +171,31 @@ async def update_word(id: int, request: Request):
         print(error)
         return {"status": "failed"}
 
+# Deleting category
 
-#
-# @app.get("/categories/{id}/word/")
-# def get_specific_word(categories_id: int):
-#     query = db.select([categories, words])
-#     query = query.select_from(categories.join(words, categories.columns.id == words.columns.category_id))
-#     result = (connection.execute(query)).fetchall()
-#     print(result)
+@app.delete("/categories/{id}")
+async def delete_category(id: int):
+    query = categories.delete().where(categories.columns.id == id)
+    connection.execute(query)
+    return {"status": "deleted"}
+
+# Deleting word
+
+@app.delete("/words/{id}")
+async def update_word(id: int):
+    try:
+        query = words.delete().where(words.columns.id == id)
+        connection.execute(query)
+        return {"status": "deleted"}
+    except Exception as error:
+        print(error)
+        return {"status": "failed"}
+
+# Getting word from particular category
+
+@app.get("/categories/{id}/word/")
+def get_specific_word(categories_id: int):
+    query = db.select([categories, words])
+    query = query.select_from(categories.join(words, categories.columns.id == words.columns.category_id))
+    result = (connection.execute(query)).fetchall()
+    print(result)
