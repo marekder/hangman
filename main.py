@@ -194,7 +194,7 @@ async def update_word(id: int):
 # Getting word from particular category
 
 @app.get("/categories/{id}/word/")
-def get_specific_word(categories_id: int):
+def get_specific_word(id: int):
     query = db.select([categories, words])
     query = query.select_from(categories.join(words, categories.columns.id == words.columns.category_id))
     result = (connection.execute(query)).fetchall()
